@@ -107,3 +107,7 @@ class TestEarlyPaymentDiscount(TestAccountReconciliationCommon):
             if receivable_line.id in line.get("counterpart_line_ids", [])
         ]
         self.assertTrue(counterpart_lines)
+        self.assertTrue(len(reconcile_data["data"]) == 3)
+        self.assertTrue(
+            reconcile_data["data"][2]["account_id"][1] == "443000 Cash Discount Loss"
+        )
