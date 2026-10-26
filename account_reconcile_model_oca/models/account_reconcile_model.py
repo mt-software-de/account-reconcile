@@ -635,9 +635,7 @@ class AccountReconcileModel(models.Model):
         return self.env["res.partner"]
 
     def _get_invoice_matching_amls_result(self, st_line, partner, candidate_vals):  # noqa: C901
-        def _create_result_dict(
-            amls_values_list, status, allow_write_off=True, early_payment_discount=False
-        ):
+        def _create_result_dict(amls_values_list, status):
             if "rejected" in status:
                 return
 
@@ -645,10 +643,10 @@ class AccountReconcileModel(models.Model):
             for aml_values in amls_values_list:
                 result["amls"] |= aml_values["aml"]
 
-            if allow_write_off and "allow_write_off" in status and self.line_ids:
+            if "allow_write_off" in status and self.line_ids:
                 result["status"] = "write_off"
 
-            if early_payment_discount:
+            if "early_payment_discount" in status:
                 result["early_payment_discount_amls"] = result["amls"]
 
             if (
@@ -678,9 +676,12 @@ class AccountReconcileModel(models.Model):
             amls_values_list.append(aml_values)
 
             # Manage the early payment discount.
-            if same_currency_mode and aml.move_id._is_eligible_for_early_payment_discount(
-                st_line_currency,
-                st_line.date,
+            if (
+                same_currency_mode
+                and aml.move_id._is_eligible_for_early_payment_discount(
+                    st_line_currency,
+                    st_line.date,
+                )
             ):
                 rate = (
                     abs(aml.amount_currency) / abs(aml.balance) if aml.balance else 1.0
@@ -743,12 +744,9 @@ class AccountReconcileModel(models.Model):
         match_type, kepts_amls_values_list = match_batch_amls(amls_with_epd_values_list)
         if match_type == "perfect":
             status = self._check_rule_propositions(st_line, kepts_amls_values_list)
-            result = _create_result_dict(
-                kepts_amls_values_list,
-                status,
-                allow_write_off=False,
-                early_payment_discount=True,
-            )
+            status = status | {"early_payment_discount"}
+            status.discard("allow_write_off")
+            result = _create_result_dict(kepts_amls_values_list, status)
             if result:
                 return result
 
