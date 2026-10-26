@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 =====================
 Account Reconcile Oca
 =====================
@@ -17,7 +13,7 @@ Account Reconcile Oca
 .. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
-.. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
+.. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-OCA%2Faccount--reconcile-lightgray.png?logo=github
@@ -48,6 +44,18 @@ Bank reconcile
 
 Access Invoicing / Dashboard with a user with Full Acounting
 capabilities. Select reconcile on the journal of your choice.
+
+Early payment discount
+----------------------
+
+Early payment discount configured on payment terms is handled
+automatically in the reconciliation widget. No dedicated reconcile model
+per payment term is required.
+
+When the bank statement amount matches the discounted amount and the
+statement date is within the discount date, invoice lines are fully
+reconciled and the required discount/tax counterpart lines are generated
+automatically.
 
 Account reconcile
 -----------------
